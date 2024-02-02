@@ -1,1 +1,8 @@
-custom/secrets/
+# local packages
+packages/
+
+# secrets
+secrets/
+
+# temp files
+*.elc

@@ -1,20 +1,20 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
+;; startup tweaks ;;
+;; starts on fullscreen
+(toggle-frame-fullscreen)
+
 ;; vars ;;
 (defvar doom-dir "~/.doom.d/")
+(defvar org-dir (if IS-MAC "~/Library/Mobile Documents/com~apple~CloudDocs/org/" "~/org/"))
 
 ;; set paths ;;
-(add-to-list 'load-path (concat doom-dir "custom/"))
-(add-to-list 'load-path (concat doom-dir "custom/secrets/"))
+(add-to-list 'load-path (concat doom-dir "gmelo/"))
+(add-to-list 'load-path (concat doom-dir "secrets/"))
 
-;; org-mode ;;
-(setq! org-agenda-files (file-expand-wildcards "~/org/*")) ;; to collect tasks from within subfolders
 
-;; org-jira ;;
-(require 'org-jira-conf nil 'noerror)
-
-;; org-modern ;;
-(with-eval-after-load 'org (global-org-modern-mode))
-
-;; ejc-sql ;;
-(require 'ejc-sql-conf nil 'noerror)
+(require 'gmelo-org nil 'noerror)
+(require 'gmelo-tasks nil 'noerror)
+(require 'gmelo-sql-client nil 'noerror)
+(require 'gmelo-media nil 'noerror)
+(require 'gmelo-keymaps nil 'noerror)

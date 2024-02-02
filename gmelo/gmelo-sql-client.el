@@ -1,10 +1,10 @@
-;;; custom/ejc-sql-config.el -*- lexical-binding: t; -*-
+;;; gmelo/gmelo-sql-client.el -*- lexical-binding: t; -*-
 
 (require 'ejc-sql)
 
 ;; Require completion frontend (autocomplete or company). One of them or both.
 (require 'ejc-autocomplete)
-(require 'ejc-company)
+;(require 'ejc-company)
 
 (setq nrepl-sync-request-timeout 60)
 (setq clomacs-httpd-default-port 8090) ; Use a port other than 8080.
@@ -16,17 +16,17 @@
 (setq ejc-org-mode-show-results t)
 (setq ejc-complete-on-dot t)
 (setq ejc-use-flx t)                          ; Enable `flx' fuzzy matching.
-(setq ejc-completion-system 'standard)
+;(setq ejc-completion-system 'standard)
 (setq ejc-result-table-impl 'ejc-result-mode) ; Set major-mode for results.
 ;; (setq ejc-result-table-impl 'orgtbl-mode)  ; Default major-mode for results.
 
 (defun k/ejc-after-emacs-init-hook ()
   (push 'ejc-company-backend company-backends)
   ;; In case of `company-mode' is used by default this can be useful:
-  ;; (company-quickhelp-mode)
+  ;;(company-quickhelp-mode)
   )
 
-(add-hook 'after-init-hook 'k/ejc-after-emacs-init-hook)
+;(add-hook 'after-init-hook 'k/ejc-after-emacs-init-hook)
 
 (defun k/sql-mode-hook ()
   (ejc-sql-mode t))
@@ -42,8 +42,8 @@
   ;; Enable one of the completion frontend by by default but not both.
   (auto-complete-mode t) ; Enable `auto-complete-mode'
   (ejc-ac-setup)
-  ;;(company-mode t)    ; or `company-mode'.
-  ;;(ejc-eldoc-setup)      ; Setup ElDoc.
+  ;(company-mode t)    ; or `company-mode'.
+  ;(ejc-eldoc-setup)      ; Setup ElDoc.
   (electric-pair-mode))
 
 (add-hook 'ejc-sql-minor-mode-hook 'k/ejc-sql-mode-hook)
@@ -59,5 +59,19 @@
 (add-hook 'ejc-sql-connected-hook 'k/ejc-sql-connected-hook)
 
 (require 'ejc-sql-databases nil 'noerror)
+;; (ejc-create-connection
+;;         "<conn>"
+;;         :dependencies [[net.snowflake/snowflake-jdbc "3.13.27"]
+;;                 [net.java.dev.jna/jna "5.13.0"]]
+;;         :connection-uri (concat "jdbc:snowflake://<snowflake_account>.snowflakecomputing.com:443"
+;;                                 "?user=<user>"
+;;                                 "&password=<password>"
+;;                                 "&warehouse=<wh>"
+;;                                 "&role=<role>"
+;;                                 "&db=<db>"
+;;                                 "&schema=<schema>"
+;;                                 "&authenticator=snowflake"
+;;                                 "&stringsQuotedForColumnDef=true"
+;;                                 "&JDBC_QUERY_RESULT_FORMAT=JSON"))
 
-(provide 'ejc-sql-conf)
+(provide 'gmelo-sql-client)
