@@ -1,0 +1,219 @@
+* Introduction
+This is my approach to ==Literate== Emacs config, putting code and documentation side by side. This uses =org-babel= to tangle (=org-babel-tangle=) all code blocks into separate modular files that would be read by Emacs' internals.
+
+This document is divided in 4 sections: =Introduction=, for a brief introduction to the literate approach and how the document is organized; =gmelo configs=, including all my personal Emacs configurations preceeded by a as-comprehensive-as-I-can documentation; =Packages=, where I organize and load any local package I'm working on; and =References= to refer to any external content that helped me during this undetermined but exciting path of Emacs exploration.
+
+* =gmelo= configs
+** Startup
+*** TODO Startup description
+#+begin_src elisp :tangle (concat doom-dir "config.el")
+;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
+
+(defvar doom-dir "~/.doom.d/")
+;; starts on fullscreen
+(if IS-MAC (toggle-frame-fullscreen))
+
+;; set paths ;;
+(add-to-list 'load-path (concat doom-dir "gmelo/"))
+(add-to-list 'load-path (concat doom-dir "secrets/"))
+#+end_src
+** Global Variables
+*** TODO Global Variables description
+#+begin_src elisp :tangle (concat doom-dir "config.el")
+(defvar org-dir (if IS-MAC "~/Library/Mobile Documents/com~apple~CloudDocs/org/" "~/org/"))
+#+end_src
+
+** Keymaps
+*** TODO Keymaps description
+#+begin_src elisp :tangle (concat doom-dir "gmelo/gmelo-keymaps.el")
+;;; gmelo/gmelo-keymaps.el -*- lexical-binding: t; -*-
+
+;; Keymaps :)
+(map!
+  ;; SPC r
+  (:leader
+   (:after eradio
+      :desc "Toggle Eradio" :n "r t" #'eradio-toggle
+      :desc "Play Eradio" :n "r p" #'eradio-play
+      :desc "Stop Eradio" :n "r s" #'eradio-stop)
+   ;(:after org
+   ;   :desc "Something else from other package" :n "r d" #'somefunction)
+   )
+
+  ;; org
+  (:after org
+   :map org-mode-map
+      "C-c <tab>" #'org-table-toggle-column-width)
+
+  ;; treemacs
+  ;; kIt should be used
+  ;; to map something that you want nothing else to override
+  (:map 'override
+        "<M-tab>" #'treemacs))
+
+
+;; evil navigation mapping ;;
+;; In evil, the vim modes (e.g., normal, visual, insert, etc) are known
+;; as states.
+(evil-define-key '(normal visual) 'global "L" #'evil-end-of-line)
+(evil-define-key '(normal visual) 'global "H" #'evil-beginning-of-line)
+
+(provide 'gmelo-keymaps)
+#+end_src
+** Org
+*** TODO Org description
+Org mode is a fascinating tool for notetaking...
+
+#+begin_src elisp :tangle (concat doom-dir "gmelo/gmelo-org.el")
+;;; gmelo/gmelo-org.el -*- lexical-binding: t; -*-
+
+;; org-mode ;;
+(setq! org-agenda-files (file-expand-wildcards (concat org-dir "*"))) ;; to collect tasks from within subfolders
+(setq! org-table-export-default-format "orgtbl-to-csv")
+(setq! org-table-header-line-p t)
+
+;; org-roam ;;
+(setq! org-roam-directory org-dir)
+(setq! org-roam-completion-everywhere t)
+(org-roam-db-autosync-enable)
+
+;; org-modern ;;
+(with-eval-after-load 'org (global-org-modern-mode))
+
+;; org-pretty-table
+(add-hook 'org-mode-hook (lambda () (org-pretty-table-mode)))
+
+(provide 'gmelo-org)
+#+end_src
+** Tasks
+*** TODO Tasks description
+#+begin_src elisp :tangle (concat doom-dir "gmelo/gmelo-tasks.el")
+;;; gmelo/gmelo-tasks.el -*- lexical-binding: t; -*-
+
+(require 'org-jira)
+
+;; setup jira within org folder
+(setq! org-jira-working-dir org-dir)
+;; get assigned issues from current sprint only
+(setq! org-jira-default-jql "assignee = currentUser() AND resolution = Unresolved AND sprint in openSprints()")
+
+;; set jiralib-url
+;; In MacOS, I needed to manually create the credentials on Keychain Access App
+(require 'org-jira-conn nil 'noerror)
+;; (setq! jiralib-url "")
+
+(provide 'gmelo-tasks)
+#+end_src
+** SQL Client
+*** TODO SQL Client description
+#+begin_src elisp :tangle (concat doom-dir "gmelo/gmelo-sql-client.el")
+;;; gmelo/gmelo-sql-client.el -*- lexical-binding: t; -*-
+
+(require 'ejc-sql)
+
+;; Require completion frontend (autocomplete or company). One of them or both.
+(require 'ejc-autocomplete)
+;(require 'ejc-company)
+
+(setq nrepl-sync-request-timeout 60)
+(setq clomacs-httpd-default-port 8090) ; Use a port other than 8080.
+;; Allow use any CIDER nREPL not only library dedicated nREPL
+;; (setq clomacs-allow-other-repl t)
+
+;; Show results of SQL snippets evaluation in `org-mode'
+;; in dedicated buffer.
+(setq ejc-org-mode-show-results t)
+(setq ejc-complete-on-dot t)
+(setq ejc-use-flx t)                          ; Enable `flx' fuzzy matching.
+;(setq ejc-completion-system 'standard)
+(setq ejc-result-table-impl 'ejc-result-mode) ; Set major-mode for results.
+;; (setq ejc-result-table-impl 'orgtbl-mode)  ; Default major-mode for results.
+
+(defun k/ejc-after-emacs-init-hook ()
+  (push 'ejc-company-backend company-backends)
+  ;; In case of `company-mode' is used by default this can be useful:
+  ;;(company-quickhelp-mode)
+  )
+
+;(add-hook 'after-init-hook 'k/ejc-after-emacs-init-hook)
+
+(defun k/sql-mode-hook ()
+  (ejc-sql-mode t))
+
+(add-hook 'sql-mode-hook 'k/sql-mode-hook)
+
+(defun k/ejc-result-mode-hook ()
+  (display-line-numbers-mode))
+
+(add-hook 'ejc-result-mode-hook 'k/ejc-result-mode-hook)
+
+(defun k/ejc-sql-mode-hook ()
+  ;; Enable one of the completion frontend by by default but not both.
+  (auto-complete-mode t) ; Enable `auto-complete-mode'
+  (ejc-ac-setup)
+  ;(company-mode t)    ; or `company-mode'.
+  ;(ejc-eldoc-setup)      ; Setup ElDoc.
+  (electric-pair-mode))
+
+(add-hook 'ejc-sql-minor-mode-hook 'k/ejc-sql-mode-hook)
+
+(defun k/ejc-sql-connected-hook ()
+  (ejc-set-fetch-size 99)         ; Limit for the number of records to output.
+  (ejc-set-max-rows 99)           ; Limit for the number of records in ResultSet.
+  (ejc-set-show-too-many-rows-message t) ; Set output 'Too many rows' message.
+  (ejc-set-column-width-limit 25) ; Limit for outputing the number of chars per column.
+  (ejc-set-use-unicode t)         ; Use unicode symbols for grid borders.
+  )
+
+(add-hook 'ejc-sql-connected-hook 'k/ejc-sql-connected-hook)
+
+(require 'ejc-sql-databases nil 'noerror)
+;; (ejc-create-connection
+;;         "<conn>"
+;;         :dependencies [[net.snowflake/snowflake-jdbc "3.13.27"]
+;;                 [net.java.dev.jna/jna "5.13.0"]]
+;;         :connection-uri (concat "jdbc:snowflake://<snowflake_account>.snowflakecomputing.com:443"
+;;                                 "?user=<user>"
+;;                                 "&password=<password>"
+;;                                 "&warehouse=<wh>"
+;;                                 "&role=<role>"
+;;                                 "&db=<db>"
+;;                                 "&schema=<schema>"
+;;                                 "&authenticator=snowflake"
+;;                                 "&stringsQuotedForColumnDef=true"
+;;                                 "&JDBC_QUERY_RESULT_FORMAT=JSON"))
+
+(provide 'gmelo-sql-client)
+#+end_src
+** Media
+*** TODO Media description
+#+begin_src elisp :tangle (concat doom-dir "gmelo/gmelo-media.el")
+;;; gmelo/gmelo-media.el -*- lexical-binding: t; -*-
+
+;; eradio ;;
+(use-package! eradio
+  :init
+  (setq! eradio-player '("mpv" "--no-video" "--no-terminal"))
+  :config
+  ;;TODO: need to map keymaps
+  (setq! eradio-channels '(("Radio - Brazilian Pagode 90s" . "https://zeno.fm/radio/pagode-90-pagode-antigo-e-samba/")
+                           ("Radio - Brazilian Rock 80s, 90s, 00s" . "https://zeno.fm/radio/silei_rock-brasil-80-e-90/")
+                           ("Radio - Brazilian Sertanejo" . "https://zeno.fm/radio/sertaneja-fm/")
+                           ("Radio - Brazilian Brega" . "https://zeno.fm/radio/radio-classico-do-brega/")
+                           ("Radio - MPB" . "https://zeno.fm/radio/musicapopularbrasileira/")
+                           ("Radio - Brazilian Forro" . "https://zeno.fm/radio/radio-forro-antigas/"))))
+
+(provide 'gmelo-media)
+#+end_src
+** _LOADING_
+#+begin_src elisp :tangle (concat doom-dir "config.el")
+(require 'gmelo-org nil 'noerror)
+(require 'gmelo-tasks nil 'noerror)
+(require 'gmelo-sql-client nil 'noerror)
+(require 'gmelo-media nil 'noerror)
+(require 'gmelo-keymaps nil 'noerror)
+#+end_src
+* Packages
+** TODO Packages description
+* References
+** TODO References

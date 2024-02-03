@@ -1,17 +1,14 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
-;; startup tweaks ;;
-;; starts on fullscreen
-(toggle-frame-fullscreen)
-
-;; vars ;;
 (defvar doom-dir "~/.doom.d/")
-(defvar org-dir (if IS-MAC "~/Library/Mobile Documents/com~apple~CloudDocs/org/" "~/org/"))
+;; starts on fullscreen
+(if IS-MAC (toggle-frame-fullscreen))
 
 ;; set paths ;;
 (add-to-list 'load-path (concat doom-dir "gmelo/"))
 (add-to-list 'load-path (concat doom-dir "secrets/"))
 
+(defvar org-dir (if IS-MAC "~/Library/Mobile Documents/com~apple~CloudDocs/org/" "~/org/"))
 
 (require 'gmelo-org nil 'noerror)
 (require 'gmelo-tasks nil 'noerror)
