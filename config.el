@@ -14,4 +14,5 @@
 (require 'gmelo-tasks nil 'noerror)
 (require 'gmelo-sql-client nil 'noerror)
 (require 'gmelo-media nil 'noerror)
+(require 'gmelo-tex nil 'noerror)
 (require 'gmelo-keymaps nil 'noerror)

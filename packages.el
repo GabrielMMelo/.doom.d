@@ -19,3 +19,4 @@
 (package! ejc-sql
   :recipe (:local-repo "./packages/ejc-sql"))
 (package! org-jira :disable (if IS-WINDOWS t))
+(package! todoist)

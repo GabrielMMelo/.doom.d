@@ -12,13 +12,12 @@
 ;; (setq clomacs-allow-other-repl t)
 
 ;; Show results of SQL snippets evaluation in `org-mode'
-;; in dedicated buffer.
 (setq ejc-org-mode-show-results t)
 (setq ejc-complete-on-dot t)
-(setq ejc-use-flx t)                          ; Enable `flx' fuzzy matching.
-;(setq ejc-completion-system 'standard)
-(setq ejc-result-table-impl 'ejc-result-mode) ; Set major-mode for results.
-;; (setq ejc-result-table-impl 'orgtbl-mode)  ; Default major-mode for results.
+;(setq ejc-use-flx t)                          ; Enable `flx' fuzzy matching.
+(setq ejc-completion-system 'standard)
+;;(setq ejc-result-table-impl 'ejc-result-mode) ; Set major-mode for results.
+(setq ejc-result-table-impl 'orgtbl-mode)  ; Default major-mode for results.
 
 (defun k/ejc-after-emacs-init-hook ()
   (push 'ejc-company-backend company-backends)
@@ -33,17 +32,17 @@
 
 (add-hook 'sql-mode-hook 'k/sql-mode-hook)
 
-(defun k/ejc-result-mode-hook ()
-  (display-line-numbers-mode))
+;(defun k/ejc-result-mode-hook ()
+;  (display-line-numbers-mode))
 
-(add-hook 'ejc-result-mode-hook 'k/ejc-result-mode-hook)
+;(add-hook 'ejc-result-mode-hook 'k/ejc-result-mode-hook)
 
 (defun k/ejc-sql-mode-hook ()
   ;; Enable one of the completion frontend by by default but not both.
   (auto-complete-mode t) ; Enable `auto-complete-mode'
   (ejc-ac-setup)
   ;(company-mode t)    ; or `company-mode'.
-  ;(ejc-eldoc-setup)      ; Setup ElDoc.
+  (ejc-eldoc-setup)      ; Setup ElDoc.
   (electric-pair-mode))
 
 (add-hook 'ejc-sql-minor-mode-hook 'k/ejc-sql-mode-hook)

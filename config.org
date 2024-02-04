@@ -102,7 +102,33 @@ Org mode is a fascinating tool for notetaking...
 (require 'org-jira-conn nil 'noerror)
 ;; (setq! jiralib-url "")
 
+(require 'todoist-conn nil 'noerror)
+;; (setq! todoist-token "")
+
+
 (provide 'gmelo-tasks)
+#+end_src
+
+** TeX
+*** TODO TeX description
+#+begin_src elisp :tangle (concat doom-dir "gmelo/gmelo-tex.el")
+;;; gmelo/gmelo-tex.el -*- lexical-binding: t; -*-
+
+;; Add texbin to the PATH
+(setenv "PATH" (concat (getenv "PATH") ":/Library/TeX/texbin/"))
+(setq! exec-path (append exec-path '("/Library/TeX/texbin/")))
+
+;; Enable tex document parsing
+(setq! TeX-auto-save t)
+(setq! TeX-parse-self t)
+
+;; Enable multifile document structure (e.g. when using \include or \input)
+(setq-default TeX-master nil)
+
+;; Change latex to use pdflatex
+(setq! latex-run-command "pdflatex")
+
+(provide 'gmelo-tex)
 #+end_src
 ** SQL Client
 *** TODO SQL Client description
@@ -121,13 +147,12 @@ Org mode is a fascinating tool for notetaking...
 ;; (setq clomacs-allow-other-repl t)
 
 ;; Show results of SQL snippets evaluation in `org-mode'
-;; in dedicated buffer.
 (setq ejc-org-mode-show-results t)
 (setq ejc-complete-on-dot t)
-(setq ejc-use-flx t)                          ; Enable `flx' fuzzy matching.
-;(setq ejc-completion-system 'standard)
-(setq ejc-result-table-impl 'ejc-result-mode) ; Set major-mode for results.
-;; (setq ejc-result-table-impl 'orgtbl-mode)  ; Default major-mode for results.
+;(setq ejc-use-flx t)                          ; Enable `flx' fuzzy matching.
+(setq ejc-completion-system 'standard)
+;;(setq ejc-result-table-impl 'ejc-result-mode) ; Set major-mode for results.
+(setq ejc-result-table-impl 'orgtbl-mode)  ; Default major-mode for results.
 
 (defun k/ejc-after-emacs-init-hook ()
   (push 'ejc-company-backend company-backends)
@@ -142,17 +167,17 @@ Org mode is a fascinating tool for notetaking...
 
 (add-hook 'sql-mode-hook 'k/sql-mode-hook)
 
-(defun k/ejc-result-mode-hook ()
-  (display-line-numbers-mode))
+;(defun k/ejc-result-mode-hook ()
+;  (display-line-numbers-mode))
 
-(add-hook 'ejc-result-mode-hook 'k/ejc-result-mode-hook)
+;(add-hook 'ejc-result-mode-hook 'k/ejc-result-mode-hook)
 
 (defun k/ejc-sql-mode-hook ()
   ;; Enable one of the completion frontend by by default but not both.
   (auto-complete-mode t) ; Enable `auto-complete-mode'
   (ejc-ac-setup)
   ;(company-mode t)    ; or `company-mode'.
-  ;(ejc-eldoc-setup)      ; Setup ElDoc.
+  (ejc-eldoc-setup)      ; Setup ElDoc.
   (electric-pair-mode))
 
 (add-hook 'ejc-sql-minor-mode-hook 'k/ejc-sql-mode-hook)
@@ -211,6 +236,7 @@ Org mode is a fascinating tool for notetaking...
 (require 'gmelo-tasks nil 'noerror)
 (require 'gmelo-sql-client nil 'noerror)
 (require 'gmelo-media nil 'noerror)
+(require 'gmelo-tex nil 'noerror)
 (require 'gmelo-keymaps nil 'noerror)
 #+end_src
 * Packages

@@ -12,4 +12,8 @@
 (require 'org-jira-conn nil 'noerror)
 ;; (setq! jiralib-url "")
 
+(require 'todoist-conn nil 'noerror)
+;; (setq! todoist-token "")
+
+
 (provide 'gmelo-tasks)
