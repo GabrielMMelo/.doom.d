@@ -1,7 +1,7 @@
 * Introduction
 This is my approach to ==Literate== Emacs config, putting code and documentation side by side. This uses =org-babel= to tangle (=org-babel-tangle=) all code blocks into separate modular files that would be read by Emacs' internals.
 
-This document is divided in 4 sections: =Introduction=, for a brief introduction to the literate approach and how the document is organized; =gmelo configs=, including all my personal Emacs configurations preceeded by a as-comprehensive-as-I-can documentation; =Packages=, where I organize and load any local package I'm working on; and =References= to refer to any external content that helped me during this undetermined but exciting path of Emacs exploration.
+This document is divided into 4 sections: =Introduction=, for a brief introduction to the literate approach and how the document is organized; =gmelo configs=, including all my personal Emacs configurations preceded by a piece of documentation as comprehensive as I can documentation; =Packages=, where I organize and load any local package I'm working on; and =References= to refer to any external content that helped me during this undetermined but exciting path of Emacs exploration.
 
 * =gmelo= configs
 ** Startup
@@ -22,6 +22,9 @@ This document is divided in 4 sections: =Introduction=, for a brief introduction
 #+begin_src elisp :tangle (concat doom-dir "config.el")
 (defvar org-dir (if IS-MAC "~/Library/Mobile Documents/com~apple~CloudDocs/org/" "~/org/"))
 #+end_src
+
+#+RESULTS:
+: org-dir
 
 ** Keymaps
 *** TODO Keymaps description
@@ -60,9 +63,20 @@ This document is divided in 4 sections: =Introduction=, for a brief introduction
 
 (provide 'gmelo-keymaps)
 #+end_src
+** Grammar checking
+#+begin_src elisp :tangle (concat doom-dir "gmelo/gmelo-grammar.el")
+;;; gmelo/gmelo-grammar.el -*- lexical-binding: t; -*-
+
+;; grammarly flycheck
+;(with-eval-after-load 'flycheck
+; (flycheck-grammarly-setup))
+
+(provide 'gmelo-grammar)
+#+end_src
+
 ** Org
 *** TODO Org description
-Org mode is a fascinating tool for notetaking...
+Org-mode is a fascinating tool for notetaking...
 
 #+begin_src elisp :tangle (concat doom-dir "gmelo/gmelo-org.el")
 ;;; gmelo/gmelo-org.el -*- lexical-binding: t; -*-
@@ -73,9 +87,12 @@ Org mode is a fascinating tool for notetaking...
 (setq! org-table-header-line-p t)
 
 ;; org-roam ;;
-(setq! org-roam-directory org-dir)
-(setq! org-roam-completion-everywhere t)
-(org-roam-db-autosync-enable)
+;(setq! org-roam-directory org-dir)
+;(setq! org-roam-completion-everywhere t)
+;;(org-roam-db-autosync-enable)
+
+;; denote ;;
+(setq! denote-directory org-dir)
 
 ;; org-modern ;;
 (with-eval-after-load 'org (global-org-modern-mode))
@@ -85,6 +102,7 @@ Org mode is a fascinating tool for notetaking...
 
 (provide 'gmelo-org)
 #+end_src
+
 ** Tasks
 *** TODO Tasks description
 #+begin_src elisp :tangle (concat doom-dir "gmelo/gmelo-tasks.el")
@@ -210,6 +228,19 @@ Org mode is a fascinating tool for notetaking...
 
 (provide 'gmelo-sql-client)
 #+end_src
+** LLM
+*** TODO LLM description
+#+begin_src elisp :tangle (concat doom-dir "gmelo/gmelo-llm.el")
+;;; gmelo/gmelo-llm.el -*- lexical-binding: t; -*-
+
+(setq! gptel-backend "ollama")
+(gptel-make-ollama "Ollama"             ;Any name of your choosing
+  :host "localhost:11434"               ;Where it's running
+  :stream t                             ;Stream responses
+  :models '("llama2:latest"))          ;List of models
+
+(provide 'gmelo-llm)
+#+end_src
 ** Media
 *** TODO Media description
 #+begin_src elisp :tangle (concat doom-dir "gmelo/gmelo-media.el")
@@ -233,8 +264,10 @@ Org mode is a fascinating tool for notetaking...
 ** _LOADING_
 #+begin_src elisp :tangle (concat doom-dir "config.el")
 (require 'gmelo-org nil 'noerror)
-(require 'gmelo-tasks nil 'noerror)
+;;(require 'gmelo-grammar nil 'noerror)
+;;(require 'gmelo-tasks nil 'noerror)
 (require 'gmelo-sql-client nil 'noerror)
+;;(require 'gmelo-llm nil 'noerror)
 (require 'gmelo-media nil 'noerror)
 (require 'gmelo-tex nil 'noerror)
 (require 'gmelo-keymaps nil 'noerror)
@@ -243,3 +276,4 @@ Org mode is a fascinating tool for notetaking...
 ** TODO Packages description
 * References
 ** TODO References
+- https://discourse.doomemacs.org/t/how-to-re-bind-keys/56: An useful resource for key bindings and maps, especially for doom emacs users

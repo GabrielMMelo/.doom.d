@@ -11,8 +11,10 @@
 (defvar org-dir (if IS-MAC "~/Library/Mobile Documents/com~apple~CloudDocs/org/" "~/org/"))
 
 (require 'gmelo-org nil 'noerror)
+(require 'gmelo-grammar nil 'noerror)
 (require 'gmelo-tasks nil 'noerror)
 (require 'gmelo-sql-client nil 'noerror)
+(require 'gmelo-llm nil 'noerror)
 (require 'gmelo-media nil 'noerror)
 (require 'gmelo-tex nil 'noerror)
 (require 'gmelo-keymaps nil 'noerror)

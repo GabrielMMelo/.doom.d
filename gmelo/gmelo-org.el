@@ -6,9 +6,12 @@
 (setq! org-table-header-line-p t)
 
 ;; org-roam ;;
-(setq! org-roam-directory org-dir)
-(setq! org-roam-completion-everywhere t)
-(org-roam-db-autosync-enable)
+;(setq! org-roam-directory org-dir)
+;(setq! org-roam-completion-everywhere t)
+;;(org-roam-db-autosync-enable)
+
+;; denote ;;
+(setq! denote-directory org-dir)
 
 ;; org-modern ;;
 (with-eval-after-load 'org (global-org-modern-mode))
